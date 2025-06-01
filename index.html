@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Password Page</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      overflow: hidden;
+      height: 100vh;
+      font-family: monospace;
+      position: relative;
+    }
+    .char {
+      color: white; /* CHANGED from black to white */
+      margin: 10px;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+      user-select: none;
+      pointer-events: none;
+      position: absolute;
+    }
+    .glow {
+      opacity: 1;
+      text-shadow:
+        0 0 5px currentColor,
+        0 0 10px currentColor,
+        0 0 20px currentColor,
+        0 0 40px currentColor;
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      10%, 30%, 50%, 70% { opacity: 0.4; }
+      20%, 40%, 60%, 80% { opacity: 1; }
+    }
+    .flicker {
+      animation: flicker 0.3s linear infinite;
+    }
+    /* Centered password box on top */
+    .centered-box {
+      background: #181818ee;
+      border-radius: 12px;
+      box-shadow: 0 0 16px #000a;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 340px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+    .label-text {
+      font-size: 1.2em;
+      margin-bottom: 12px;
+    }
+    .input-box {
+      width: 100%;
+      max-width: 220px;
+      padding: 10px;
+      margin-bottom: 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      background: #222;
+      color: #fafafa;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .action-btn {
+      width: 100%;
+      max-width: 220px;
+      padding: 10px 0;
+      border: none;
+      border-radius: 6px;
+      background: #222;
+      color: #fafafa;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: background 0.2s;
+    }
+    .action-btn:hover {
+      background: #333;
+    }
+    .error-msg {
+      color: #ff5252;
+      margin-top: 8px;
+      font-size: 0.95em;
+      height: 22px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Neon Character Wall Background -->
+  <script>
+    // --- Neon Character Wall ---
+    const characters = " Ѭ ₪ Ϟ ☢ ⚡ ✶ ⚝ ☯ ✦ ʘ ₱ Ψ ⍟ ∞ ∑ Ϟ ✴ ⟁ ⧫ ⌬ ϗ  ⚚ ⚶ ⨁ ✸ ∴ ☌  ʘ ⚵ ☽ ☾ ⚳ 🜁 🜂 🜃 🜄 🝓 🜨 ⨀ ⨂ ⚛ ⧈ ⧉ ⎔ ⊛ ⌘ ⍣ ☸ ✡ ☥ ॐ ☦ ⬖ ⟠ ⋇ ⌖ ⦿ ⧖ ∇ ∂ ".split(" ");
+    const neonColors = ['#00ffff', '#ff00ff', '#00ff00', '#ff6347', '#ffd700', '#ff1493', '#00fa9a'];
+    const totalChars = 100;
+    const winW = window.innerWidth, winH = window.innerHeight;
+    for (let i = 0; i < totalChars; i++) {
+      const span = document.createElement("span");
+      span.classList.add("char");
+      span.textContent = characters[Math.floor(Math.random() * characters.length)];
+      span.style.fontSize = `${Math.random() * 60 + 50}px`; // Increased from ~30-70 to ~50-110px
+      // Position randomly on the screen
+      span.style.left = `${Math.random() * winW}px`;
+      span.style.top = `${Math.random() * winH}px`;
+      span.dataset.depth = Math.random() * 30 + 11;
+      document.body.appendChild(span);
+    }
+    const allChars = document.querySelectorAll(".char");
+    function lightUpChar() {
+      const char = allChars[Math.floor(Math.random() * allChars.length)];
+      const color = neonColors[Math.floor(Math.random() * neonColors.length)];
+      const duration = Math.random() * 2000 + 1000;
+      const doFlicker = Math.random() < 0.3;
+      char.style.color = color;
+      char.classList.add("glow");
+      if (doFlicker) {
+        char.classList.add("flicker");
+      }
+      setTimeout(() => {
+        char.classList.remove("glow", "flicker");
+        char.style.color = 'white'; // CHANGED from 'black' to 'white'
+      }, duration);
+    }
+    setInterval(lightUpChar, 150);
+    // --- End Neon Wall ---
+  </script>
+<script>
+  // Parallax Drift Effect
+  document.addEventListener('mousemove', e => {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const offsetX = (e.clientX - centerX) / centerX;
+    const offsetY = (e.clientY - centerY) / centerY;
+
+    allChars.forEach(char => {
+      const depth = parseFloat(char.dataset.depth) || Math.random() * 10 + 5;
+      const dx = offsetX * depth;
+      const dy = offsetY * depth;
+      char.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+  });
+</script>
+
+  <!-- Password Box -->
+  <div class="centered-box">
+    <label for="password-input" class="label-text">Password:</label>
+    <input type="password" id="password-input" class="input-box" autocomplete="off" />
+    <button id="enter-btn" class="action-btn">Enter</button>
+    <div id="error-msg" class="error-msg"></div>
+  </div>
+  <script>
+    document.getElementById('enter-btn').onclick = function() {
+      const pwd = document.getElementById('password-input').value;
+      if(pwd === 'baccano') {
+        window.location.href = 'chatter.html';
+      } else {
+        document.getElementById('error-msg').innerText = "Incorrect password.";
+      }
+    };
+
+    document.getElementById('password-input').addEventListener('keydown', function(e) {
+      if(e.key === "Enter") {
+        document.getElementById('enter-btn').click();
+      }
+    });
+  </script>
+<style>
+  /* ...existing styles... */
+  .label-text {
+    font-size: 1.2em;
+    margin-bottom: 12px;
+    color: #fafafa; /* Add this line! */
+  }
+</style>
+</body>
+</html>
